@@ -6,12 +6,12 @@ Wick gives you a signal in the corner of your eye, so you don't have to remember
 
 | Battery | Menu bar |
 | --- | --- |
-| 70–100% | green |
-| ~45% | amber |
+| 70–100% | untouched, exactly as macOS draws it (or green, if you turn that on) |
+| 70% → 45% | amber slowly fades in |
 | ~25% | orange |
 | 10% and below | red |
 
-The colors blend smoothly between those points. When you're plugged in, the tint fades away (you can change this).
+The colors blend smoothly between those points. While the battery is healthy, Wick stays out of sight. It only shows up once you're actually draining. When you plug in, the tint fades away (you can change this).
 
 ## Privacy and security
 
@@ -21,7 +21,7 @@ Wick is built to be boring from a security point of view:
 - **No network, in or out.** The App Sandbox is on and grants no network entitlement, so macOS blocks any connection even if the code tried to make one. There is no telemetry, no update checker and no crash reporter.
 - **Nothing can look into it.** No AppleScript, no URL schemes, no XPC services and no shared files. The hardened runtime blocks debuggers and code injection.
 - **No dependencies.** It uses only Apple's system frameworks. There are no packages and no third-party code.
-- **Stores only your three preferences** (intensity, placement, show while plugged in), in its own sandbox container.
+- **Stores only your four preferences** (intensity, placement, show green when healthy, show while plugged in), in its own sandbox container.
 - **You build it yourself.** No prebuilt binaries are distributed. You compile the source you can read.
 - **No image files.** Even the app icon is drawn from code (`Sources/Flame.swift` and `scripts/icon/`), so there's nothing opaque in the repo.
 
@@ -57,6 +57,7 @@ Wick adds a small flame to the menu bar, filled with the current battery color. 
 - **Placement:**
   - *Behind Menu Bar Text* keeps text and icons crisp. This is the default on macOS 26 and later, where the menu bar is transparent.
   - *Over Menu Bar* lays a translucent wash on top. This works on every version. Pick it if you can't see the tint.
+- **Show Green When Healthy (70%+)** tints the menu bar green while the battery is healthy, instead of leaving it alone.
 - **Show While Plugged In**
 - **Launch at Login**
 - **Quit**

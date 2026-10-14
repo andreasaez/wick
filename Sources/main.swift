@@ -32,9 +32,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func render(animated: Bool) {
-        let visible = batteryState.map { !$0.isPluggedIn || settings.showWhilePluggedIn } ?? false
-        let tintColor = visible ? currentColor?.withAlphaComponent(settings.intensity.alpha) : nil
-        tint.setColor(tintColor ?? .clear, animated: animated)
+        var tintColor = NSColor.clear
+        if let state = batteryState, !state.isPluggedIn || settings.showWhilePluggedIn,
+           let shade = Palette.tint(forPercent: state.percent, showHealthy: settings.showGreenWhenHealthy) {
+            tintColor = shade.color.withAlphaComponent(settings.intensity.alpha * shade.strength)
+        }
+        tint.setColor(tintColor, animated: animated)
         statusItem?.button?.image = Self.flame(color: currentColor)
         statusItem?.button?.setAccessibilityLabel(batteryState.map { "Wick, battery \($0.percent)%" } ?? "Wick")
     }
@@ -79,6 +82,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                              action: #selector(chooseIntensity(_:))))
         menu.addItem(submenu("Placement", Placement.allCases, selected: settings.placement, title: \.title,
                              action: #selector(choosePlacement(_:))))
+
+        let green = item("Show Green When Healthy (\(Palette.healthy)%+)", #selector(toggleShowGreenWhenHealthy))
+        green.state = settings.showGreenWhenHealthy ? .on : .off
+        menu.addItem(green)
 
         let plugged = item("Show While Plugged In", #selector(toggleShowWhilePluggedIn))
         plugged.state = settings.showWhilePluggedIn ? .on : .off
@@ -128,6 +135,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard let raw = sender.representedObject as? String, let value = Placement(rawValue: raw) else { return }
         settings.placement = value
         tint.placement = value
+    }
+
+    @objc private func toggleShowGreenWhenHealthy() {
+        settings.showGreenWhenHealthy.toggle()
+        render(animated: true)
     }
 
     @objc private func toggleShowWhilePluggedIn() {

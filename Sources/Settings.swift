@@ -56,6 +56,12 @@ final class Settings {
         set { defaults.set(newValue.rawValue, forKey: "placement") }
     }
 
+    /// Off by default: a healthy battery leaves the menu bar untouched.
+    var showGreenWhenHealthy: Bool {
+        get { defaults.bool(forKey: "showGreenWhenHealthy") }
+        set { defaults.set(newValue, forKey: "showGreenWhenHealthy") }
+    }
+
     var showWhilePluggedIn: Bool {
         get { defaults.bool(forKey: "showWhilePluggedIn") }
         set { defaults.set(newValue, forKey: "showWhilePluggedIn") }
